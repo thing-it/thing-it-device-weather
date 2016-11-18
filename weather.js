@@ -90,13 +90,13 @@ module.exports = {
             }
         }, {
             id: "languageCode",
-            label: "LanguageCode",
+            label: "Language Code",
             type: {
                 id: "string"
             }
         }, {
             id: "units",
-            label: "Country Code",
+            label: "Units",
             type: {
                 id: "string"
             }
