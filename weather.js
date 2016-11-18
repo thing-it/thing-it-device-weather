@@ -260,7 +260,22 @@ function Weather() {
                 this.logError("Error communicating to weather service.", error, body);
             }
             else {
-                this.logDebug(body);
+                var weatherData = JSON.parse(body);
+                //this.logDebug(body);
+
+                this.state = {
+                    temperature: weatherData.main.temp,
+                    barometricPressure: weatherData.main.pressure,
+                    humidity: weatherData.main.humidity,
+                    weatherMain: weatherData.weather[0].main,
+                    weatherDescription: weatherData.weather[0].description,
+                    weatherIconURL: "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png",
+                    cityId: weatherData.id,
+                    cityName: weatherData.name
+                };
+
+                this.publishStateChange();
+
             }
         }.bind(this));
 

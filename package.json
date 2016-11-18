@@ -1,6 +1,6 @@
 {
   "name": "thing-it-device-weather",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "[thing-it-node] Device Plugin for Online Weather data.",
   "authors": "Klaus Berberich",
   "license": "MIT",
@@ -17,6 +17,7 @@
     "url": "https://github.com/klausberberich/thing-it-device-weather"
   },
   "dependencies": {
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "request": "^2.78.0"
   }
 }
