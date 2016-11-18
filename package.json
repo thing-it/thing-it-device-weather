@@ -1,0 +1,22 @@
+{
+  "name": "thing-it-device-weather",
+  "version": "0.1.1",
+  "description": "[thing-it-node] Device Plugin for Online Weather data.",
+  "authors": "Klaus Berberich",
+  "license": "MIT",
+  "keywords": [
+    "IoT",
+    "IIoT",
+    "Weather",
+    "Smart Building",
+    "Smart Maintenance",
+    "thing-it"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/klausberberich/thing-it-device-weather"
+  },
+  "dependencies": {
+    "q": "^1.4.1"
+  }
+}
