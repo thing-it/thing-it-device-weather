@@ -28,6 +28,12 @@ module.exports = {
                 id: "decimal"
             }
         }, {
+            id: "temperatureUnit",
+            label: "Temperature Unit",
+            type: {
+                id: "string"
+            }
+        }, {
             id: "barometricPressure",
             label: "Barometric Pressure",
             type: {
@@ -201,8 +207,13 @@ function Weather() {
             this.configuration.countryCode = "de";
         }
 
-        if ((typeof this.configuration.units === undefined ) || !this.configuration.units || ("" == this.configuration.units)) {
+        if ("metric" == this.configuration.units) {
+            this.state.temperatureUnit = "&deg;C";
+        } else if ("imperial" == this.configuration.units) {
+            this.state.temperatureUnit = "&deg;F";
+        } else {
             this.configuration.units = "metric";
+            this.state.temperatureUnit = "&deg;C";
         }
 
         if ((typeof this.configuration.language === undefined ) || !this.configuration.language || ("" == this.configuration.language)) {
@@ -233,7 +244,7 @@ function Weather() {
         clearInterval(this.updateInterval);
     }
 
-        /**
+    /**
      * - Connects to OpenWeatherMap
      * - Sets the status
      */
@@ -258,6 +269,7 @@ function Weather() {
         }, function (error, response, body) {
             if (error) {
                 this.logError("Error communicating to weather service.", error, body);
+                deferred.reject("Error communicating to weather service.");
             }
             else {
                 var weatherData = JSON.parse(body);
@@ -275,11 +287,10 @@ function Weather() {
                 };
 
                 this.publishStateChange();
-
+                deferred.resolve();
             }
         }.bind(this));
 
-        deferred.resolve();
         return deferred.promise;
     };
 
