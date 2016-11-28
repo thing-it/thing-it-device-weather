@@ -216,8 +216,8 @@ function Weather() {
             this.state.temperatureUnit = "&deg;C";
         }
 
-        if ((typeof this.configuration.language === undefined ) || !this.configuration.language || ("" == this.configuration.language)) {
-            this.configuration.language = "de";
+        if ((typeof this.configuration.languageCode === undefined ) || !this.configuration.languageCode || ("" == this.configuration.languageCode)) {
+            this.configuration.languageCode = "de";
         }
 
         if ((typeof this.configuration.updateFrequencySeconds === undefined ) || !this.configuration.updateFrequencySeconds || (0 == this.configuration.updateFrequencySeconds)) {
@@ -256,7 +256,7 @@ function Weather() {
 
         var url = "http://api.openweathermap.org/data/2.5/weather?zip=" + this.configuration.zip +
             "," + this.configuration.countryCode + "&units=" + this.configuration.units + "&lang=" +
-            this.configuration.language + "&APPID=" + this.configuration.openWeatherMapKey;
+            this.configuration.languageCode + "&APPID=" + this.configuration.openWeatherMapKey;
 
         this.logDebug("Request URL", url);
 
