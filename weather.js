@@ -75,6 +75,48 @@ module.exports = {
             type: {
                 id: "string"
             }
+        }, {
+            id: "clouds",
+            label: "Cloud Percentage",
+            type: {
+                id: "integer"
+            }
+        }, {
+            id: "rainLast3h",
+            label: "Rain Last 3h",
+            type: {
+                id: "integer"
+            }
+        }, {
+            id: "snowLast3h",
+            label: "Snow Last 3h",
+            type: {
+                id: "integer"
+            }
+        }, {
+            id: "windSpeed",
+            label: "Wind Speed",
+            type: {
+                id: "integer"
+            }
+        }, {
+            id: "windDirection",
+            label: "Wind Direction",
+            type: {
+                id: "integer"
+            }
+        }, {
+            id: "sunrise",
+            label: "Sunrise",
+            type: {
+                id: "integer"
+            }
+        }, {
+            id: "sunset",
+            label: "Sunset",
+            type: {
+                id: "integer"
+            }
         }],
         actorTypes: [],
         sensorTypes: [],
@@ -191,7 +233,14 @@ function Weather() {
             weatherDescription: null,
             weatherIconURL: null,
             cityId: null,
-            cityName: null
+            cityName: null,
+            clouds: 0,
+            rainLast3h: 0,
+            snowLast3h: 0,
+            windSpeed: 0,
+            windDirection: 0,
+            sunrise: 0,
+            sunset: 0
         };
 
         if ((typeof this.configuration.openWeatherMapKey === undefined ) || !this.configuration.openWeatherMapKey || ("" == this.configuration.openWeatherMapKey)) {
@@ -283,7 +332,24 @@ function Weather() {
                     weatherDescription: weatherData.weather[0].description,
                     weatherIconURL: "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png",
                     cityId: weatherData.id,
-                    cityName: weatherData.name
+                    cityName: weatherData.name,
+                    clouds: weatherData.clouds.all,
+                    windSpeed: weatherData.wind.speed,
+                    windDirection: weatherData.wind.deg,
+                    sunrise: weatherData.sys.sunrise,
+                    sunset: weatherData.sys.sunset
+                };
+
+                try {
+                    this.state.rainLast3h = weatherData.rain['3h'];
+                } catch (e) {
+                    //ignore
+                };
+
+                try {
+                    this.state.snowLast3h = weatherData.snow['3h'];
+                } catch (e) {
+                    //ignore
                 };
 
                 this.publishStateChange();
