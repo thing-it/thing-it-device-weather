@@ -18,7 +18,7 @@ weather.configuration = {
     languageCode: "de",
     units: "metric",
     updateFrequencySeconds: 10,
-    openWeatherMapKey: "1e53c2e3757bee1dfc6da5768f27aa99"
+    openWeatherMapKey: ""
 };
 weather.publishEvent = function(event, data){
     console.log("Event", event);
