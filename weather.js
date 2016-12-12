@@ -125,8 +125,8 @@ module.exports = {
             label: "Update"
         }],
         configuration: [{
-            id: "zip",
-            label: "ZIP",
+            id: "cityName",
+            label: "City Name",
             type: {
                 id: "string"
             }
@@ -250,8 +250,8 @@ function Weather() {
             this.configError = true;
         }
 
-        if ((typeof this.configuration.zip === undefined ) || !this.configuration.zip || ("" == this.configuration.zip)) {
-            this.configuration.zip = "60594";
+        if ((typeof this.configuration.cityName === undefined ) || !this.configuration.cityName || ("" == this.configuration.cityName)) {
+            this.configuration.cityName = "Frankfurt am Main";
         }
 
         if ((typeof this.configuration.countryCode === undefined ) || !this.configuration.countryCode || ("" == this.configuration.countryCode)) {
@@ -309,7 +309,7 @@ function Weather() {
 
             this.logDebug("Polling weather.", this.configuration);
 
-            var url = "http://api.openweathermap.org/data/2.5/weather?zip=" + this.configuration.zip +
+            var url = "http://api.openweathermap.org/data/2.5/weather?q=" + this.configuration.cityName +
                 "," + this.configuration.countryCode + "&units=" + this.configuration.units + "&lang=" +
                 this.configuration.languageCode + "&APPID=" + this.configuration.openWeatherMapKey;
 
@@ -329,7 +329,7 @@ function Weather() {
                 else {
                     var weatherData = JSON.parse(body);
 
-                    if (weatherData.cod) {
+                    if ((weatherData.cod) && (200 != weatherData.cod)) {
                         this.logError('Could not get weather. Error code ' + weatherData.cod + ' with message "'
                             + weatherData.message + '".');
                     } else {
