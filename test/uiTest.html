@@ -15,11 +15,12 @@
 <body>
 <div class="padding1" ng-controller="TestController as test">
     <h1>Weather</h1>
-    <div class="formSection flexLayout flexJustifyCenter" style="width: 40em;" ng-repeat="component in [test.weather]" ng-include="'../web/weather.html'"></div>
-<!--
-    <h1>Channel</h1>
-    <div ng-repeat="component in [test.channel]" ng-include="'../web/channel.html'"></div>
--->
+    <div class="formSection flexLayout flexJustifyCenter" style="width: 40em;" ng-repeat="component in [test.weather]"
+         ng-include="'../web/weather.html'"></div>
+    <!--
+        <h1>Channel</h1>
+        <div ng-repeat="component in [test.channel]" ng-include="'../web/channel.html'"></div>
+    -->
 </div>
 </body>
 </html>

@@ -357,8 +357,8 @@ function Weather() {
                                 windSpeed: weatherData.wind.speed,
                                 windSpeedUnit: this.state.windSpeedUnit,
                                 windDirection: weatherData.wind.deg,
-                                sunrise: weatherData.sys.sunrise,
-                                sunset: weatherData.sys.sunset
+                                sunrise: new Date(weatherData.sys.sunrise*1000),
+                                sunset: new Date(weatherData.sys.sunset*1000)
                             };
 
                             try {
