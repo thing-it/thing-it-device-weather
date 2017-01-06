@@ -16,9 +16,9 @@ and light in a wine cellar. It allows to see how outside weather influences the 
 
 Dashboarding capabilities at [thing-it.com](wwww.thing-it.com) allow to generate charts that correlate outside weather
 data with any other sensor or actor. With that combination a variety of interesting analytical questions can be answered: 
-* What is the response of a room to the outside temperature? - As shown above.
-* How electricity usage get influenced by weather? - With the weather device and an energy meter.
-* How does my soil moisture correlate to outside circumstances? - 
+* What is the response of a room to the outside temperature? - With an ambient sensor like the one used above.
+* How does electricity usage get influenced by weather? - With the weather device and an energy meter.
+* How does soil moisture correlate to outside circumstances? - Combining weather and soil sensors. 
 
 You can also trigger action based on weather data:
 * Send an alert to a user if the temperature is below freezing.
