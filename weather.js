@@ -336,13 +336,15 @@ function Weather() {
                     deferred.reject("Error communicating to weather service.");
                 }
                 else {
-                    var weatherData = JSON.parse(body);
+                    try {
+                        var weatherData = JSON.parse(body);
 
-                    if ((weatherData.cod) && (200 != weatherData.cod)) {
-                        this.logError('Could not get weather. Error code ' + weatherData.cod + ' with message "'
-                            + weatherData.message + '".');
-                    } else {
-                        try {
+                        if ((weatherData.cod) && (200 != weatherData.cod)) {
+                            var errorMessage = 'Could not get weather. Error code ' + weatherData.cod + ' with message "'
+                                + weatherData.message + '".';
+                            this.logError(errorMessage);
+                            deferred.reject(errorMessage);
+                        } else {
                             this.state = {
                                 temperatureUnit: this.state.temperatureUnit,
                                 temperature: weatherData.main.temp,
@@ -357,8 +359,8 @@ function Weather() {
                                 windSpeed: weatherData.wind.speed,
                                 windSpeedUnit: this.state.windSpeedUnit,
                                 windDirection: weatherData.wind.deg,
-                                sunrise: new Date(weatherData.sys.sunrise*1000),
-                                sunset: new Date(weatherData.sys.sunset*1000)
+                                sunrise: new Date(weatherData.sys.sunrise * 1000),
+                                sunset: new Date(weatherData.sys.sunset * 1000)
                             };
 
                             try {
@@ -374,11 +376,11 @@ function Weather() {
                             }
 
                             this.publishStateChange();
-                        } catch (e) {
-                            this.logError(e);
+                            deferred.resolve();
                         }
-
-                        deferred.resolve();
+                    } catch (e) {
+                        this.logError(e);
+                        deferred.reject(e);
                     }
                 }
             }.bind(this));
