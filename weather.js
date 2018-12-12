@@ -123,6 +123,36 @@ module.exports = {
             type: {
                 id: "integer"
             }
+        }, {
+            id: "forecastTimestamp",
+            label: "Forecast Timestamp",
+            type: {
+                id: "any"
+            }
+        }, {
+            id: "forecastTemperature",
+            label: "Forecast Temperature",
+            type: {
+                id: "any"
+            }
+        }, {
+            id: "forecastWeatherMain",
+            label: "Forecast Weather Main",
+            type: {
+                id: "any"
+            }
+        }, {
+            id: "forecastRain",
+            label: "Forecast Rain",
+            type: {
+                id: "any"
+            }
+        }, {
+            id: "forecastSnow",
+            label: "Forecast Snow",
+            type: {
+                id: "any"
+            }
         }],
         actorTypes: [],
         sensorTypes: [],
@@ -246,7 +276,12 @@ function Weather() {
             windSpeed: 0,
             windDirection: 0,
             sunrise: 0,
-            sunset: 0
+            sunset: 0,
+            forecastTimestamp: [],
+            forecastTemperature: [],
+            forecastWeatherMain: [],
+            forecastRain: [],
+            forecastSnow: []
         };
 
         this.configError = false;
@@ -293,8 +328,10 @@ function Weather() {
         this.logInfo("Starting up Weather.");
 
         this.getWeather();
+        this.getForecast();
         this.updateInterval = setInterval(function () {
-            this.getWeather()
+            this.getWeather();
+            this.getForecast();
         }.bind(this), this.configuration.updateFrequencySeconds * 1000);
         deferred.resolve();
         return deferred.promise;
@@ -389,6 +426,92 @@ function Weather() {
         return deferred.promise;
     };
 
+
+    /**
+     *
+     */
+
+    Weather.prototype.getForecast = function () {
+        var deferred = q.defer();
+
+        if (this.configError) {
+            this.logError("Configuration error - cannot retrieve weather info.");
+        } else {
+            this.logInfo("Requesting weather update from http://api.openweathermap.org/");
+
+            this.logDebug("Polling weather.", this.configuration);
+
+            var url = "http://api.openweathermap.org/data/2.5/forecast?q=" + this.configuration.cityName +
+                "," + this.configuration.countryCode + "&units=" + this.configuration.units + "&lang=" +
+                this.configuration.languageCode + "&APPID=" + this.configuration.openWeatherMapKey;
+
+            this.logDebug("Request URL", url);
+
+            if (!request) {
+                request = require('request');
+            }
+
+            request.get({
+                url: url
+            }, function (error, response, body) {
+                if (error) {
+                    this.logError("Error communicating to weather service.", error, body);
+                    deferred.reject("Error communicating to weather service.");
+                }
+                else {
+                    try {
+                        var weatherData = JSON.parse(body);
+
+                        if ((weatherData.cod) && (200 != weatherData.cod)) {
+                            var errorMessage = 'Could not get weather forecast. Error code ' + weatherData.cod + ' with message "'
+                                + weatherData.message + '".';
+                            this.logError(errorMessage);
+                            deferred.reject(errorMessage);
+                        } else {
+                            let timeArray = [];
+                            let tempArray = [];
+                            let weatherMainArray = [];
+                            let rainArray = [];
+                            let snowArray = [];
+                            for(let n in weatherData.list){
+                                timeArray.push(weatherData.list[n].dt);
+                                tempArray.push(weatherData.list[n].main.temp);
+                                weatherMainArray.push(weatherData.list[n].weather[0].main);
+                                if(weatherData.list[n].rain['3h'] === undefined) rainArray.push(0);
+                                else rainArray.push(weatherData.list[n].rain['3h']);
+                                if(weatherData.list[n].snow['3h'] === undefined) snowArray.push(0);
+                                else snowArray.push(weatherData.list[n].snow['3h']);
+                            }
+
+                            this.state = {
+                                forecastTimestamp: timeArray,
+                                forecastTemperature: tempArray,
+                                // barometricPressure: weatherData.main.pressure,
+                                // humidity: weatherData.main.humidity,
+                                forecastWeatherMain: weatherMainArray,
+                                // weatherDescription: weatherData.weather[0].description,
+                                // weatherIconURL: "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png",
+                                // clouds: weatherData.clouds.all,
+                                // windSpeed: weatherData.wind.speed,
+                                // windSpeedUnit: this.state.windSpeedUnit,
+                                // windDirection: weatherData.wind.deg,
+                                forecastRain: rainArray,
+                                forecastSnow: snowArray
+                            };
+
+                            this.publishStateChange();
+                            deferred.resolve();
+                        }
+                    } catch (e) {
+                        this.logError(e);
+                        deferred.reject(e);
+                    }
+                }
+            }.bind(this));
+        }
+
+        return deferred.promise;
+    };
 
     /**
      *
