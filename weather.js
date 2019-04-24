@@ -477,10 +477,18 @@ function Weather() {
                                 timeArray.push(weatherData.list[n].dt);
                                 tempArray.push(weatherData.list[n].main.temp);
                                 weatherMainArray.push(weatherData.list[n].weather[0].main);
-                                if(weatherData.list[n].rain['3h'] === undefined) rainArray.push(0);
-                                else rainArray.push(weatherData.list[n].rain['3h']);
-                                if(weatherData.list[n].snow['3h'] === undefined) snowArray.push(0);
-                                else snowArray.push(weatherData.list[n].snow['3h']);
+                                try {
+                                    if (weatherData.list[n].rain['3h'] === undefined) rainArray.push(0);
+                                    else rainArray.push(weatherData.list[n].rain['3h']);
+                                }catch (e) {
+                                    //ignore
+                                }
+                                try {
+                                    if (weatherData.list[n].snow['3h'] === undefined) snowArray.push(0);
+                                    else snowArray.push(weatherData.list[n].snow['3h']);
+                                }catch (e) {
+                                    //ignore
+                                }
                             }
 
                             this.state = {
