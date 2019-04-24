@@ -503,7 +503,7 @@ function Weather() {
                             let rainArray = [];
                             let snowArray = [];
                             for(let n in weatherData.list){
-                                timeArray.push(weatherData.list[n].dt);
+                                timeArray.push(new Date(weatherData.list[n].dt*1000));
                                 tempArray.push(weatherData.list[n].main.temp);
                                 weatherMainArray.push(weatherData.list[n].weather[0].main);
                                 try {
