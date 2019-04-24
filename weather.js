@@ -21,6 +21,18 @@ module.exports = {
         label: "Weather",
         tangible: true,
         discoverable: true,
+        dataTypes: {
+            sensorType: {
+                family: "enumeration",
+                values: [{
+                    id: "CURRENT",
+                    label: "Current Weather"
+                }, {
+                    id: "FORECAST",
+                    label: "Forecast Weather"
+                }]
+            }
+        },
         state: [{
             id: "temperature",
             label: "Temperature",
@@ -196,6 +208,14 @@ module.exports = {
             type: {
                 id: "string"
             }
+        }, {
+            label: "Weather Type",
+            id: "weatherType",
+            type: {
+                family: "reference",
+                id: "weatherType"
+            },
+            defaultValue: "CURRENT"
         }]
     },
 
@@ -259,6 +279,8 @@ function Weather() {
      */
     Weather.prototype.start = function () {
         var deferred = q.defer();
+
+        if(!this.configuration.weatherType) this.configuration.weatherType = "CURRENT";
 
         // Initialize state values
         this.state = {
@@ -327,13 +349,20 @@ function Weather() {
 
         this.logInfo("Starting up Weather.");
 
-        this.getWeather();
-        this.getForecast();
-        this.updateInterval = setInterval(function () {
+        if(this.configuration.weatherType === "CURRENT"){
             this.getWeather();
+            this.updateInterval = setInterval(function () {
+                this.getWeather();
+            }.bind(this), this.configuration.updateFrequencySeconds * 1000);
+            deferred.resolve();
+        }
+        if(this.configuration.weatherType === "FORECAST") {
             this.getForecast();
-        }.bind(this), this.configuration.updateFrequencySeconds * 1000);
-        deferred.resolve();
+            this.updateInterval = setInterval(function () {
+                this.getForecast();
+            }.bind(this), this.configuration.updateFrequencySeconds * 1000);
+            deferred.resolve();
+        }
         return deferred.promise;
     };
 
