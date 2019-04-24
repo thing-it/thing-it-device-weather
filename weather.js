@@ -481,13 +481,13 @@ function Weather() {
                                     if (weatherData.list[n].rain['3h'] === undefined) rainArray.push(0);
                                     else rainArray.push(weatherData.list[n].rain['3h']);
                                 }catch (e) {
-                                    //ignore
+                                    rainArray.push(0);//ignore
                                 }
                                 try {
                                     if (weatherData.list[n].snow['3h'] === undefined) snowArray.push(0);
                                     else snowArray.push(weatherData.list[n].snow['3h']);
                                 }catch (e) {
-                                    //ignore
+                                    snowArray.push(0);//ignore
                                 }
                             }
 
