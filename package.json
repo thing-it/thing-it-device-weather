@@ -1,9 +1,12 @@
 {
-  "name": "thing-it-device-weather",
+  "name": "@thing-it/device-weather",
   "version": "0.1.6",
   "description": "[thing-it-node] Device Plugin for Online Weather data.",
   "authors": "Klaus Berberich",
   "license": "MIT",
+  "scripts": {
+    "postversion": "git push && git push --tags && npm publish"
+  },
   "keywords": [
     "IoT",
     "IIoT",
