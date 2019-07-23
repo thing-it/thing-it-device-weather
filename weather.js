@@ -280,6 +280,12 @@ function Weather() {
     Weather.prototype.start = function () {
         var deferred = q.defer();
 
+        this.operationalState = {
+            status: 'PENDING',
+            message: 'Waiting for initialization...'
+        };
+        this.publishOperationalStateChange();
+
         if(!this.configuration.weatherType) this.configuration.weatherType = "CURRENT";
 
         // Initialize state values
@@ -354,6 +360,13 @@ function Weather() {
             this.updateInterval = setInterval(function () {
                 this.getWeather();
             }.bind(this), this.configuration.updateFrequencySeconds * 1000);
+            
+            this.operationalState = {
+                status: 'OK',
+                message: 'Weather successfully initialized'
+            }
+            this.publishOperationalStateChange();
+            
             deferred.resolve();
         }
         if(this.configuration.weatherType === "FORECAST") {
@@ -361,6 +374,13 @@ function Weather() {
             this.updateInterval = setInterval(function () {
                 this.getForecast();
             }.bind(this), this.configuration.updateFrequencySeconds * 1000);
+
+            this.operationalState = {
+                status: 'OK',
+                message: 'Weather successfully initialized'
+            }
+            this.publishOperationalStateChange();
+
             deferred.resolve();
         }
         return deferred.promise;
