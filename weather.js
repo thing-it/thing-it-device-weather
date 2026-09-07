@@ -241,7 +241,7 @@ module.exports = {
 };
 
 var q = require('q');
-var request;
+var axios;
 var https;
 //var WorldConnectionAPI;
 
@@ -410,65 +410,60 @@ function Weather() {
 
             this.logDebug("Request URL", url);
 
-            if (!request) {
-                request = require('request');
+            if (!axios) {
+                axios = require('axios');
             }
 
-            request.get({
-                url: url
-            }, function (error, response, body) {
-                if (error) {
-                    this.logError("Error communicating to weather service.", error, body);
-                    deferred.reject("Error communicating to weather service.");
-                }
-                else {
-                    try {
-                        var weatherData = JSON.parse(body);
+            axios.get(url, {responseType: 'json', transitional: {silentJSONParsing: false}}).then(function (response) {
+                try {
+                    var weatherData = response.data;
 
-                        if ((weatherData.cod) && (200 != weatherData.cod)) {
-                            var errorMessage = 'Could not get weather. Error code ' + weatherData.cod + ' with message "'
-                                + weatherData.message + '".';
-                            this.logError(errorMessage);
-                            deferred.reject(errorMessage);
-                        } else {
-                            this.state = {
-                                temperatureUnit: this.state.temperatureUnit,
-                                temperature: weatherData.main.temp,
-                                barometricPressure: weatherData.main.pressure,
-                                humidity: weatherData.main.humidity,
-                                weatherMain: weatherData.weather[0].main,
-                                weatherDescription: weatherData.weather[0].description,
-                                weatherIconURL: "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png",
-                                cityId: weatherData.id,
-                                cityName: weatherData.name,
-                                clouds: weatherData.clouds.all,
-                                windSpeed: weatherData.wind.speed,
-                                windSpeedUnit: this.state.windSpeedUnit,
-                                windDirection: weatherData.wind.deg,
-                                sunrise: new Date(weatherData.sys.sunrise * 1000),
-                                sunset: new Date(weatherData.sys.sunset * 1000)
-                            };
+                    if ((weatherData.cod) && (200 != weatherData.cod)) {
+                        var errorMessage = 'Could not get weather. Error code ' + weatherData.cod + ' with message "'
+                            + weatherData.message + '".';
+                        this.logError(errorMessage);
+                        deferred.reject(errorMessage);
+                    } else {
+                        this.state = {
+                            temperatureUnit: this.state.temperatureUnit,
+                            temperature: weatherData.main.temp,
+                            barometricPressure: weatherData.main.pressure,
+                            humidity: weatherData.main.humidity,
+                            weatherMain: weatherData.weather[0].main,
+                            weatherDescription: weatherData.weather[0].description,
+                            weatherIconURL: "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png",
+                            cityId: weatherData.id,
+                            cityName: weatherData.name,
+                            clouds: weatherData.clouds.all,
+                            windSpeed: weatherData.wind.speed,
+                            windSpeedUnit: this.state.windSpeedUnit,
+                            windDirection: weatherData.wind.deg,
+                            sunrise: new Date(weatherData.sys.sunrise * 1000),
+                            sunset: new Date(weatherData.sys.sunset * 1000)
+                        };
 
-                            try {
-                                this.state.rainLast3h = weatherData.rain['3h'];
-                            } catch (e) {
-                                //ignore
-                            }
-
-                            try {
-                                this.state.snowLast3h = weatherData.snow['3h'];
-                            } catch (e) {
-                                //ignore
-                            }
-
-                            this.publishStateChange();
-                            deferred.resolve();
+                        try {
+                            this.state.rainLast3h = weatherData.rain['3h'];
+                        } catch (e) {
+                            //ignore
                         }
-                    } catch (e) {
-                        this.logError(e);
-                        deferred.reject(e);
+
+                        try {
+                            this.state.snowLast3h = weatherData.snow['3h'];
+                        } catch (e) {
+                            //ignore
+                        }
+
+                        this.publishStateChange();
+                        deferred.resolve();
                     }
+                } catch (e) {
+                    this.logError(e);
+                    deferred.reject(e);
                 }
+            }.bind(this)).catch(function (error) {
+                this.logError("Error communicating to weather service.", error);
+                deferred.reject("Error communicating to weather service.");
             }.bind(this));
         }
 
@@ -496,74 +491,69 @@ function Weather() {
 
             this.logDebug("Request URL", url);
 
-            if (!request) {
-                request = require('request');
+            if (!axios) {
+                axios = require('axios');
             }
 
-            request.get({
-                url: url
-            }, function (error, response, body) {
-                if (error) {
-                    this.logError("Error communicating to weather service.", error, body);
-                    deferred.reject("Error communicating to weather service.");
-                }
-                else {
-                    try {
-                        var weatherData = JSON.parse(body);
+            axios.get(url, {responseType: 'json', transitional: {silentJSONParsing: false}}).then(function (response) {
+                try {
+                    var weatherData = response.data;
 
-                        if ((weatherData.cod) && (200 != weatherData.cod)) {
-                            var errorMessage = 'Could not get weather forecast. Error code ' + weatherData.cod + ' with message "'
-                                + weatherData.message + '".';
-                            this.logError(errorMessage);
-                            deferred.reject(errorMessage);
-                        } else {
-                            let timeArray = [];
-                            let tempArray = [];
-                            let weatherMainArray = [];
-                            let rainArray = [];
-                            let snowArray = [];
-                            for(let n in weatherData.list){
-                                timeArray.push(new Date(weatherData.list[n].dt*1000));
-                                tempArray.push(weatherData.list[n].main.temp);
-                                weatherMainArray.push(weatherData.list[n].weather[0].main);
-                                try {
-                                    if (weatherData.list[n].rain['3h'] === undefined) rainArray.push(0);
-                                    else rainArray.push(weatherData.list[n].rain['3h']);
-                                }catch (e) {
-                                    rainArray.push(0);//ignore
-                                }
-                                try {
-                                    if (weatherData.list[n].snow['3h'] === undefined) snowArray.push(0);
-                                    else snowArray.push(weatherData.list[n].snow['3h']);
-                                }catch (e) {
-                                    snowArray.push(0);//ignore
-                                }
+                    if ((weatherData.cod) && (200 != weatherData.cod)) {
+                        var errorMessage = 'Could not get weather forecast. Error code ' + weatherData.cod + ' with message "'
+                            + weatherData.message + '".';
+                        this.logError(errorMessage);
+                        deferred.reject(errorMessage);
+                    } else {
+                        let timeArray = [];
+                        let tempArray = [];
+                        let weatherMainArray = [];
+                        let rainArray = [];
+                        let snowArray = [];
+                        for(let n in weatherData.list){
+                            timeArray.push(new Date(weatherData.list[n].dt*1000));
+                            tempArray.push(weatherData.list[n].main.temp);
+                            weatherMainArray.push(weatherData.list[n].weather[0].main);
+                            try {
+                                if (weatherData.list[n].rain['3h'] === undefined) rainArray.push(0);
+                                else rainArray.push(weatherData.list[n].rain['3h']);
+                            }catch (e) {
+                                rainArray.push(0);//ignore
                             }
-
-                            this.state = {
-                                forecastTimestamp: timeArray,
-                                forecastTemperature: tempArray,
-                                // barometricPressure: weatherData.main.pressure,
-                                // humidity: weatherData.main.humidity,
-                                forecastWeatherMain: weatherMainArray,
-                                // weatherDescription: weatherData.weather[0].description,
-                                // weatherIconURL: "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png",
-                                // clouds: weatherData.clouds.all,
-                                // windSpeed: weatherData.wind.speed,
-                                // windSpeedUnit: this.state.windSpeedUnit,
-                                // windDirection: weatherData.wind.deg,
-                                forecastRain: rainArray,
-                                forecastSnow: snowArray
-                            };
-
-                            this.publishStateChange();
-                            deferred.resolve();
+                            try {
+                                if (weatherData.list[n].snow['3h'] === undefined) snowArray.push(0);
+                                else snowArray.push(weatherData.list[n].snow['3h']);
+                            }catch (e) {
+                                snowArray.push(0);//ignore
+                            }
                         }
-                    } catch (e) {
-                        this.logError(e);
-                        deferred.reject(e);
+
+                        this.state = {
+                            forecastTimestamp: timeArray,
+                            forecastTemperature: tempArray,
+                            // barometricPressure: weatherData.main.pressure,
+                            // humidity: weatherData.main.humidity,
+                            forecastWeatherMain: weatherMainArray,
+                            // weatherDescription: weatherData.weather[0].description,
+                            // weatherIconURL: "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png",
+                            // clouds: weatherData.clouds.all,
+                            // windSpeed: weatherData.wind.speed,
+                            // windSpeedUnit: this.state.windSpeedUnit,
+                            // windDirection: weatherData.wind.deg,
+                            forecastRain: rainArray,
+                            forecastSnow: snowArray
+                        };
+
+                        this.publishStateChange();
+                        deferred.resolve();
                     }
+                } catch (e) {
+                    this.logError(e);
+                    deferred.reject(e);
                 }
+            }.bind(this)).catch(function (error) {
+                this.logError("Error communicating to weather service.", error);
+                deferred.reject("Error communicating to weather service.");
             }.bind(this));
         }
 

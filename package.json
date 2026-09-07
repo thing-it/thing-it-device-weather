@@ -1,10 +1,11 @@
 {
   "name": "@thing-it/device-weather",
-  "version": "0.1.7",
+  "version": "1.0.0",
   "description": "[thing-it-node] Device Plugin for Online Weather data.",
   "authors": "Klaus Berberich",
   "license": "MIT",
   "scripts": {
+    "test": "jest",
     "postversion": "git push && git push --tags && npm publish"
   },
   "keywords": [
@@ -20,7 +21,16 @@
     "url": "https://github.com/thing-it/thing-it-device-weather"
   },
   "dependencies": {
-    "q": "^1.4.1",
-    "request": "^2.78.0"
+    "axios": "^1.7.0",
+    "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nock": "^13.5.4"
+  },
+  "jest": {
+    "testMatch": [
+      "**/test/*.test.js"
+    ]
   }
 }
